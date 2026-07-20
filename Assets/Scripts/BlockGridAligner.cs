@@ -1,0 +1,84 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+[DefaultExecutionOrder(-100)]
+[ExecuteAlways]
+public class BlockGridAligner : MonoBehaviour
+{
+    [FormerlySerializedAs("acilisdaHizala")]
+    public bool alignOnStart = true;
+
+    private void Awake()
+    {
+        if (TryGetComponent(out BoxCollider parentCollider))
+        {
+            parentCollider.enabled = false;
+        }
+    }
+
+    private void Start()
+    {
+        if (!Application.isPlaying || !alignOnStart)
+        {
+            return;
+        }
+
+        AlignAllBlocks(false);
+    }
+
+    public void AlignAllBlocks(bool writeLog = true)
+    {
+        GridBoard.Clear();
+
+        var blocks = new List<BlockMover>();
+        ComponentCacheUtility.CollectBlocksInChildren(transform, transform, blocks, true);
+        int count = 0;
+
+        foreach (BlockMover block in blocks)
+        {
+            if (block == null || block.transform == transform)
+            {
+                continue;
+            }
+
+            BoxCollider collider = block.CachedBoxCollider;
+            if (collider == null)
+            {
+                continue;
+            }
+
+            GridConfig.NormalizeCollider(collider, block.transform);
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                Undo.RecordObject(block.transform, "Grid Align Block");
+            }
+#endif
+
+            block.AlignToGridCell();
+            count++;
+        }
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying && count > 0)
+        {
+            EditorUtility.SetDirty(this);
+            if (gameObject.scene.IsValid())
+            {
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            }
+        }
+#endif
+
+        if (writeLog)
+        {
+            Debug.Log($"BlockGridAligner: aligned {count} blocks to grid.");
+        }
+    }
+}
