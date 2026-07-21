@@ -34,9 +34,9 @@ public class GameManager : MonoBehaviour
         {
             levelCompletePanel.SetActive(false);
 
-            if (!levelCompletePanel.TryGetComponent(out NextLevelPanelController _))
+            if (!levelCompletePanel.TryGetComponent(out NextLevelPanelController panelController))
             {
-                levelCompletePanel.AddComponent<NextLevelPanelController>();
+                panelController = levelCompletePanel.AddComponent<NextLevelPanelController>();
             }
         }
 

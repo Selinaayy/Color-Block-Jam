@@ -6,90 +6,59 @@ using TMPro;
 
 public class NextLevelPanelController : MonoBehaviour
 {
-    [Header("Buttons (resolved by name if empty)")]
-    public Button nextLevelButton;
-    public Button closeButton;
-    public Button restartButton;
-    public Button soundOnButton;
-    public Button soundOffButton;
-    public Button vibrationButton;
-
-    [Header("Sound/Vibration visuals")]
-    public GameObject soundOnObject;
-    public GameObject soundOffObject;
-
-    [Header("Texts (resolved by name if empty)")]
-    public TMP_Text levelTitleText;
-    public TMP_Text nextLevelButtonText;
-    public TMP_Text rewardText;
-    public TMP_Text statsText;
-
     [Header("Animation")]
     public float entranceDuration = 0.45f;
+
+    private Button nextLevelButton;
+    private Button closeButton;
+    private Button restartButton;
+    private TMP_Text levelTitleText;
+    private TMP_Text nextLevelButtonText;
+    private TMP_Text rewardText;
 
     private LevelManager levelManager;
     private RestartManager restartManager;
     private CanvasGroup canvasGroup;
-    private RectTransform panelRect;
-    private Image dimOverlay;
-    private RectTransform rewardCard;
-    private RectTransform statsCard;
-    private bool enhancedUiBuilt;
+    private RectTransform popupRect;
+    private RectTransform goldRow;
+    private bool uiBuilt;
     private Coroutine showRoutine;
     private Coroutine pulseRoutine;
 
     void Awake()
     {
-        levelManager = LevelManager.Instance;
-        if (levelManager == null)
-        {
-            GameObject managerObject = new GameObject("LevelManager");
-            levelManager = managerObject.AddComponent<LevelManager>();
-        }
+        EnsureManagers();
 
-        restartManager = RestartManager.Instance;
-        if (restartManager == null)
-        {
-            GameObject restartObject = new GameObject("RestartManager");
-            restartManager = restartObject.AddComponent<RestartManager>();
-        }
-
-        if (SettingsManager.Instance == null)
-        {
-            GameObject settingsObject = new GameObject("SettingsManager");
-            settingsObject.AddComponent<SettingsManager>();
-        }
-
-        TryGetComponent(out panelRect);
         if (!TryGetComponent(out canvasGroup))
         {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
 
-        BuildEnhancedUI();
-        ResolveButtonsIfNeeded();
-        ResolveTextsIfNeeded();
-        ApplyPanelFontToDynamicTexts();
-        BindButtons();
-    }
+        if (TryGetComponent(out RectTransform panelRect))
+        {
+            StretchFull(panelRect);
+        }
 
-    void Start()
-    {
-        UpdateSoundButtons();
+        if (TryGetComponent(out Image rootImage))
+        {
+            rootImage.sprite = null;
+            rootImage.color = Color.clear;
+            rootImage.raycastTarget = true;
+        }
+
+        BuildLevelCompleteUI();
+        BindButtons();
     }
 
     void OnEnable()
     {
-        if (!enhancedUiBuilt)
+        if (!uiBuilt)
         {
-            BuildEnhancedUI();
+            BuildLevelCompleteUI();
+            BindButtons();
         }
 
-        if (SettingsManager.Instance != null)
-        {
-            SettingsManager.Instance.RefreshGoldDisplays();
-            UpdateSoundButtons();
-        }
+        SettingsManager.Instance?.RefreshGoldDisplays();
 
         if (showRoutine != null)
         {
@@ -114,171 +83,132 @@ public class NextLevelPanelController : MonoBehaviour
         }
     }
 
-    private void BuildEnhancedUI()
+    private void EnsureManagers()
     {
-        if (enhancedUiBuilt) return;
-        enhancedUiBuilt = true;
+        if (LevelManager.Instance == null)
+        {
+            levelManager = new GameObject("LevelManager").AddComponent<LevelManager>();
+        }
+        else
+        {
+            levelManager = LevelManager.Instance;
+        }
 
-        dimOverlay = CreateStretchImage("DimOverlay", new Color(0f, 0f, 0f, 0.62f));
-        dimOverlay.transform.SetAsFirstSibling();
+        if (RestartManager.Instance == null)
+        {
+            restartManager = new GameObject("RestartManager").AddComponent<RestartManager>();
+        }
+        else
+        {
+            restartManager = RestartManager.Instance;
+        }
+
+        if (SettingsManager.Instance == null)
+        {
+            new GameObject("SettingsManager").AddComponent<SettingsManager>();
+        }
+    }
+
+    private void BuildLevelCompleteUI()
+    {
+        Transform existingPopup = transform.Find("PopupPanel");
+        Transform existingContent = transform.Find("PopupPanel/Content");
+        if (uiBuilt && existingPopup != null && existingContent != null && existingPopup.TryGetComponent(out Image existingBackground) && existingBackground.sprite != null)
+        {
+            return;
+        }
+
+        uiBuilt = true;
+
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+
+        Image dimOverlay = CreateStretchImage("DimOverlay", new Color(0f, 0f, 0f, 0.72f));
         dimOverlay.raycastTarget = true;
+        dimOverlay.transform.SetAsFirstSibling();
 
-        Transform existingStars = transform.Find("StarsContainer");
-        if (existingStars != null)
+        popupRect = CreateRect("PopupPanel", transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(920f, 1180f));
+        Image popupBackground = popupRect.gameObject.AddComponent<Image>();
+        ApplySprite(popupBackground, LevelCompleteUILoader.Get("Bg_popup_"), false);
+
+        RectTransform banner = CreateRect("Banner", popupRect, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 48f), new Vector2(820f, 200f));
+        Image bannerImage = banner.gameObject.AddComponent<Image>();
+        ApplySprite(bannerImage, LevelCompleteUILoader.Get("Banner"), true);
+
+        TMP_Text completeTitleText = CreateText("CompleteTitle", banner, "LEVEL COMPLETE!", 44f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(1f, 0.93f, 0.28f));
+        StretchFull(completeTitleText.rectTransform);
+        completeTitleText.rectTransform.offsetMin = new Vector2(40f, 12f);
+        completeTitleText.rectTransform.offsetMax = new Vector2(-40f, -12f);
+
+        closeButton = CreateCornerButton("CloseButton", popupRect, LevelCompleteUILoader.Get("Close"), new Vector2(-36f, -36f), new Vector2(92f, 92f));
+
+        RectTransform content = CreateRect("Content", popupRect, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(0f, -220f));
+        content.offsetMin = new Vector2(48f, 80f);
+        content.offsetMax = new Vector2(-48f, -200f);
+
+        VerticalLayoutGroup layout = content.gameObject.AddComponent<VerticalLayoutGroup>();
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.spacing = 36f;
+        layout.childControlWidth = true;
+        layout.childControlHeight = false;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+        layout.padding = new RectOffset(24, 24, 24, 24);
+
+        RectTransform levelTitleRect = CreateLayoutItem("LevelTitleRow", content, new Vector2(560f, 72f));
+        levelTitleText = CreateText("LevelTitle", levelTitleRect, "LEVEL 1", 50f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        StretchFull(levelTitleText.rectTransform);
+
+        goldRow = CreateLayoutItem("GoldReward", content, new Vector2(460f, 100f));
+        HorizontalLayoutGroup goldLayout = goldRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+        goldLayout.childAlignment = TextAnchor.MiddleCenter;
+        goldLayout.spacing = 16f;
+        goldLayout.childControlWidth = false;
+        goldLayout.childControlHeight = false;
+        goldLayout.childForceExpandWidth = false;
+        goldLayout.childForceExpandHeight = false;
+
+        RectTransform coinRect = CreateRect("GoldCoin", goldRow, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(88f, 88f));
+        LayoutElement coinLayout = coinRect.gameObject.AddComponent<LayoutElement>();
+        coinLayout.preferredWidth = 88f;
+        coinLayout.preferredHeight = 88f;
+        Image coinImage = coinRect.gameObject.AddComponent<Image>();
+        ApplySprite(coinImage, LevelCompleteUILoader.Get("Gold"), true);
+
+        rewardText = CreateText("RewardAmount", goldRow, "+100", 56f, FontStyles.Bold, TextAlignmentOptions.MidlineLeft, new Color(1f, 0.92f, 0.35f));
+        LayoutElement rewardLayout = rewardText.gameObject.AddComponent<LayoutElement>();
+        rewardLayout.preferredWidth = 220f;
+        rewardLayout.preferredHeight = 80f;
+
+        RectTransform nextLevelRect = CreateLayoutItem("NextLevelButtonRow", content, new Vector2(620f, 150f));
+        nextLevelButton = CreateSpriteButton("NextLevelButton", nextLevelRect, LevelCompleteUILoader.Get("LevelButton"), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620f, 150f));
+        StretchFull(nextLevelButton.GetComponent<RectTransform>());
+        nextLevelButtonText = CreateText("NextLevelLabel", nextLevelButton.transform, "NEXT LEVEL (2)", 38f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        StretchFull(nextLevelButtonText.rectTransform);
+        nextLevelButtonText.rectTransform.offsetMin = new Vector2(24f, 8f);
+        nextLevelButtonText.rectTransform.offsetMax = new Vector2(-24f, -8f);
+
+        RectTransform replayRect = CreateLayoutItem("ReplayButtonRow", content, new Vector2(200f, 200f));
+        restartButton = CreateSpriteButton("ReplayButton", replayRect, LevelCompleteUILoader.Get("SmallButtonBlue"), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(200f, 200f));
+        StretchFull(restartButton.GetComponent<RectTransform>());
+
+        Sprite replayIcon = LevelCompleteUILoader.Get("Restart");
+        if (replayIcon != null)
         {
-            Destroy(existingStars.gameObject);
+            RectTransform iconRect = CreateRect("ReplayIcon", restartButton.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 16f), new Vector2(88f, 88f));
+            Image iconImage = iconRect.gameObject.AddComponent<Image>();
+            ApplySprite(iconImage, replayIcon, true);
         }
 
-        rewardCard = CreateAnchoredPanel("RewardCard", new Vector2(0.5f, 0.5f), new Vector2(520f, 110f), new Vector2(0f, -470f));
-        Image rewardBackground = rewardCard.gameObject.AddComponent<Image>();
-        rewardBackground.color = CardGreen;
-        rewardBackground.raycastTarget = false;
+        TMP_Text replayLabel = CreateText("ReplayLabel", restartButton.transform, "REPLAY", 28f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+        SetAnchoredRect(replayLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(180f, 40f));
 
-        Outline rewardOutline = rewardCard.gameObject.AddComponent<Outline>();
-        rewardOutline.effectColor = new Color(0f, 0f, 0f, 0.35f);
-        rewardOutline.effectDistance = new Vector2(3f, -3f);
-
-        GameObject rewardLabelObject = new GameObject("RewardLabel", typeof(RectTransform));
-        rewardLabelObject.transform.SetParent(rewardCard, false);
-        RectTransform rewardLabelRect = (RectTransform)rewardLabelObject.transform;
-        StretchFull(rewardLabelRect);
-
-        rewardText = rewardLabelObject.AddComponent<TextMeshProUGUI>();
-        rewardText.text = "+100 GOLD";
-        rewardText.fontSize = 42f;
-        rewardText.fontStyle = FontStyles.Bold;
-        rewardText.alignment = TextAlignmentOptions.Center;
-        rewardText.color = Color.white;
-        rewardText.raycastTarget = false;
-
-        statsCard = CreateAnchoredPanel("StatsCard", new Vector2(0.5f, 0.5f), new Vector2(460f, 70f), new Vector2(0f, 330f));
-        Image statsBackground = statsCard.gameObject.AddComponent<Image>();
-        statsBackground.color = CardBlue;
-        statsBackground.raycastTarget = false;
-
-        GameObject statsLabelObject = new GameObject("StatsLabel", typeof(RectTransform));
-        statsLabelObject.transform.SetParent(statsCard, false);
-        RectTransform statsLabelRect = (RectTransform)statsLabelObject.transform;
-        StretchFull(statsLabelRect);
-
-        statsText = statsLabelObject.AddComponent<TextMeshProUGUI>();
-        statsText.text = "Süre: 02:59";
-        statsText.fontSize = 30f;
-        statsText.alignment = TextAlignmentOptions.Center;
-        statsText.color = new Color(0.85f, 0.95f, 1f);
-        statsText.raycastTarget = false;
-
-        if (restartButton == null)
+        if (LevelCompleteUILoader.Get("Bg_popup_") == null)
         {
-            restartButton = CreateActionButton(
-                "RestartButton",
-                "TEKRAR OYNA",
-                new Vector2(0.5f, 0.5f),
-                new Vector2(360f, 90f),
-                new Vector2(-210f, -120f),
-                new Color(0.75f, 0.28f, 0.28f, 1f));
+            Debug.LogError("Level complete UI sprites missing. Select Assets/Resources/LevelCompleteUI folder in Unity, then reimport all PNG files as Sprite (2D and UI).");
         }
-    }
-
-    private void ResolveButtonsIfNeeded()
-    {
-        if (nextLevelButton == null)
-        {
-            Transform buttonTransform = transform.Find("Button");
-            if (buttonTransform != null && buttonTransform.TryGetComponent(out Button button))
-            {
-                nextLevelButton = button;
-            }
-        }
-
-        if (closeButton == null)
-        {
-            Transform closeTransform = transform.Find("CloseButton");
-            if (closeTransform != null && closeTransform.TryGetComponent(out Button closeButtonComponent))
-            {
-                closeButton = closeButtonComponent;
-            }
-        }
-
-        if (soundOnButton == null)
-        {
-            Transform soundOnTransform = transform.Find("soundOn");
-            if (soundOnTransform != null && soundOnTransform.TryGetComponent(out Button soundOnButtonComponent))
-            {
-                soundOnButton = soundOnButtonComponent;
-                soundOnObject = soundOnTransform.gameObject;
-            }
-        }
-
-        if (soundOffButton == null)
-        {
-            Transform soundOffTransform = transform.Find("soundOff");
-            if (soundOffTransform != null && soundOffTransform.TryGetComponent(out Button soundOffButtonComponent))
-            {
-                soundOffButton = soundOffButtonComponent;
-                soundOffObject = soundOffTransform.gameObject;
-            }
-        }
-
-        if (vibrationButton == null)
-        {
-            Transform vibrationTransform = transform.Find("vibration");
-            if (vibrationTransform != null && vibrationTransform.TryGetComponent(out Button vibrationButtonComponent))
-            {
-                vibrationButton = vibrationButtonComponent;
-            }
-        }
-    }
-
-    private void ApplyPanelFontToDynamicTexts()
-    {
-        if (levelTitleText == null || levelTitleText.font == null) return;
-
-        if (rewardText != null) rewardText.font = levelTitleText.font;
-        if (statsText != null) statsText.font = levelTitleText.font;
-    }
-
-    private void ResolveTextsIfNeeded()
-    {
-        if (levelTitleText == null)
-        {
-            Transform levelInfoTransform = transform.Find("levelbilgi");
-            if (levelInfoTransform != null && levelInfoTransform.TryGetComponent(out TMP_Text titleText))
-            {
-                levelTitleText = titleText;
-            }
-        }
-
-        if (nextLevelButtonText == null && nextLevelButton != null)
-        {
-            nextLevelButtonText = FindTextInChildren(nextLevelButton.transform);
-        }
-
-        Transform completeTextTransform = transform.Find("Text (TMP)");
-        if (completeTextTransform != null && completeTextTransform.TryGetComponent(out TMP_Text completeText))
-        {
-            completeText.text = "LEVEL COMPLETE!";
-            completeText.fontStyle = FontStyles.Bold;
-        }
-    }
-
-    private static TMP_Text FindTextInChildren(Transform root)
-    {
-        if (root.TryGetComponent(out TMP_Text text))
-        {
-            return text;
-        }
-
-        for (int i = 0; i < root.childCount; i++)
-        {
-            TMP_Text childText = FindTextInChildren(root.GetChild(i));
-            if (childText != null)
-            {
-                return childText;
-            }
-        }
-
-        return null;
     }
 
     private void BindButtons()
@@ -300,36 +230,6 @@ public class NextLevelPanelController : MonoBehaviour
             restartButton.onClick.RemoveAllListeners();
             restartButton.onClick.AddListener(restartManager.RestartGame);
         }
-
-        if (soundOnButton != null)
-        {
-            soundOnButton.onClick.RemoveAllListeners();
-            soundOnButton.onClick.AddListener(() =>
-            {
-                SettingsManager.Instance.SetSoundEnabled(false);
-                UpdateSoundButtons();
-            });
-        }
-
-        if (soundOffButton != null)
-        {
-            soundOffButton.onClick.RemoveAllListeners();
-            soundOffButton.onClick.AddListener(() =>
-            {
-                SettingsManager.Instance.SetSoundEnabled(true);
-                UpdateSoundButtons();
-            });
-        }
-
-        if (vibrationButton != null)
-        {
-            vibrationButton.onClick.RemoveAllListeners();
-            vibrationButton.onClick.AddListener(() =>
-            {
-                SettingsManager.Instance.ToggleVibration();
-                SettingsManager.Instance.Vibrate();
-            });
-        }
     }
 
     private IEnumerator PlayShowAnimation()
@@ -337,10 +237,15 @@ public class NextLevelPanelController : MonoBehaviour
         UpdateDynamicContent();
 
         canvasGroup.alpha = 0f;
-        panelRect.localScale = Vector3.one * 0.82f;
+        if (popupRect != null)
+        {
+            popupRect.localScale = Vector3.one * 0.82f;
+        }
 
-        if (rewardCard != null) rewardCard.localScale = Vector3.zero;
-        if (statsCard != null) statsCard.localScale = Vector3.zero;
+        if (goldRow != null)
+        {
+            goldRow.localScale = Vector3.zero;
+        }
 
         float elapsed = 0f;
         while (elapsed < entranceDuration)
@@ -350,32 +255,42 @@ public class NextLevelPanelController : MonoBehaviour
             float eased = EaseOutBack(t);
 
             canvasGroup.alpha = t;
-            panelRect.localScale = Vector3.one * Mathf.Lerp(0.82f, 1f, eased);
+            if (popupRect != null)
+            {
+                popupRect.localScale = Vector3.one * Mathf.Lerp(0.82f, 1f, eased);
+            }
+
             yield return null;
         }
 
         canvasGroup.alpha = 1f;
-        panelRect.localScale = Vector3.one;
+        if (popupRect != null)
+        {
+            popupRect.localScale = Vector3.one;
+        }
 
-        yield return AnimateScaleIn(statsCard, 0.25f);
-        yield return AnimateScaleIn(rewardCard, 0.22f);
+        yield return AnimateScaleIn(goldRow, 0.25f);
         yield return AnimateRewardCount();
 
         if (nextLevelButton != null)
         {
-            if (pulseRoutine != null) StopCoroutine(pulseRoutine);
+            if (pulseRoutine != null)
+            {
+                StopCoroutine(pulseRoutine);
+            }
+
             pulseRoutine = StartCoroutine(PulseButton(nextLevelButton.transform));
         }
 
-        if (SettingsManager.Instance != null)
-        {
-            SettingsManager.Instance.Vibrate();
-        }
+        SettingsManager.Instance?.Vibrate();
     }
 
     private IEnumerator AnimateRewardCount()
     {
-        if (rewardText == null || SettingsManager.Instance == null) yield break;
+        if (rewardText == null || SettingsManager.Instance == null)
+        {
+            yield break;
+        }
 
         int reward = SettingsManager.Instance.levelCompleteGoldReward;
         int displayed = 0;
@@ -387,16 +302,19 @@ public class NextLevelPanelController : MonoBehaviour
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             displayed = Mathf.RoundToInt(Mathf.Lerp(0f, reward, t));
-            rewardText.text = "+" + displayed + " GOLD";
+            rewardText.text = "+" + displayed;
             yield return null;
         }
 
-        rewardText.text = "+" + reward + " GOLD";
+        rewardText.text = "+" + reward;
     }
 
     private IEnumerator AnimateScaleIn(RectTransform target, float duration)
     {
-        if (target == null) yield break;
+        if (target == null)
+        {
+            yield break;
+        }
 
         target.localScale = Vector3.zero;
         float elapsed = 0f;
@@ -439,9 +357,11 @@ public class NextLevelPanelController : MonoBehaviour
             levelTitleText.text = "LEVEL " + currentLevel;
         }
 
+        string nextLevelLabel = hasNextLevel ? "NEXT LEVEL (" + nextLevel + ")" : "COMPLETED";
+
         if (nextLevelButtonText != null)
         {
-            nextLevelButtonText.text = hasNextLevel ? "NEXT LEVEL " + nextLevel : "TAMAMLANDI";
+            nextLevelButtonText.text = nextLevelLabel;
         }
 
         if (nextLevelButton != null)
@@ -449,24 +369,9 @@ public class NextLevelPanelController : MonoBehaviour
             nextLevelButton.interactable = hasNextLevel;
         }
 
-        if (statsText != null)
+        if (rewardText != null)
         {
-            if (CountDownTimer.Instance != null)
-            {
-                float remaining = Mathf.Max(0f, CountDownTimer.Instance.RemainingTime);
-                int minutes = Mathf.FloorToInt(remaining / 60f);
-                int seconds = Mathf.FloorToInt(remaining % 60f);
-                statsText.text = "Kalan Süre: " + minutes.ToString("0") + ":" + seconds.ToString("00");
-            }
-            else
-            {
-                statsText.text = "Harika iş çıkardın!";
-            }
-        }
-
-        if (rewardText != null && SettingsManager.Instance != null)
-        {
-            rewardText.text = "+0 GOLD";
+            rewardText.text = "+0";
         }
     }
 
@@ -476,14 +381,13 @@ public class NextLevelPanelController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    private void UpdateSoundButtons()
+    private static void ApplySprite(Image image, Sprite sprite, bool preserveAspect)
     {
-        if (SettingsManager.Instance == null) return;
-
-        bool soundOn = SettingsManager.Instance.SoundEnabled;
-
-        if (soundOnObject != null) soundOnObject.SetActive(soundOn);
-        if (soundOffObject != null) soundOffObject.SetActive(!soundOn);
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.preserveAspect = preserveAspect;
+        image.color = sprite != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+        image.enabled = sprite != null;
     }
 
     private Image CreateStretchImage(string objectName, Color color)
@@ -499,55 +403,90 @@ public class NextLevelPanelController : MonoBehaviour
         return image;
     }
 
-    private RectTransform CreateAnchoredPanel(string objectName, Vector2 anchor, Vector2 size, Vector2 position)
+    private RectTransform CreateLayoutItem(string objectName, Transform parent, Vector2 size)
     {
-        GameObject panelObject = new GameObject(objectName, typeof(RectTransform));
-        panelObject.transform.SetParent(transform, false);
+        GameObject itemObject = new GameObject(objectName, typeof(RectTransform));
+        itemObject.transform.SetParent(parent, false);
 
-        RectTransform rect = (RectTransform)panelObject.transform;
-        rect.anchorMin = anchor;
-        rect.anchorMax = anchor;
-        rect.pivot = new Vector2(0.5f, 0.5f);
+        RectTransform rect = (RectTransform)itemObject.transform;
         rect.sizeDelta = size;
-        rect.anchoredPosition = position;
+
+        LayoutElement layoutElement = itemObject.AddComponent<LayoutElement>();
+        layoutElement.preferredWidth = size.x;
+        layoutElement.preferredHeight = size.y;
+        layoutElement.minHeight = size.y;
+
         return rect;
     }
 
-    private Button CreateActionButton(string objectName, string label, Vector2 anchor, Vector2 size, Vector2 position, Color color)
+    private RectTransform CreateRect(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 sizeDelta)
+    {
+        GameObject panelObject = new GameObject(objectName, typeof(RectTransform));
+        panelObject.transform.SetParent(parent, false);
+        RectTransform rect = (RectTransform)panelObject.transform;
+        SetAnchoredRect(rect, anchorMin, anchorMax, anchoredPosition, sizeDelta);
+        return rect;
+    }
+
+    private static void SetAnchoredRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 sizeDelta)
+    {
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = sizeDelta;
+    }
+
+    private Button CreateSpriteButton(string objectName, Transform parent, Sprite sprite, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 sizeDelta)
     {
         GameObject buttonObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer));
-        buttonObject.transform.SetParent(transform, false);
+        buttonObject.transform.SetParent(parent, false);
 
         RectTransform rect = (RectTransform)buttonObject.transform;
-        rect.anchorMin = anchor;
-        rect.anchorMax = anchor;
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = size;
-        rect.anchoredPosition = position;
+        SetAnchoredRect(rect, anchorMin, anchorMax, anchoredPosition, sizeDelta);
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = color;
+        ApplySprite(image, sprite, false);
 
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
-
-        GameObject textObject = new GameObject("Text", typeof(RectTransform));
-        textObject.transform.SetParent(buttonObject.transform, false);
-        RectTransform textRect = (RectTransform)textObject.transform;
-        StretchFull(textRect);
-
-        TextMeshProUGUI text = textObject.AddComponent<TextMeshProUGUI>();
-        text.text = label;
-        text.fontSize = 28f;
-        text.fontStyle = FontStyles.Bold;
-        text.alignment = TextAlignmentOptions.Center;
-        text.color = Color.white;
-
         return button;
     }
 
-    private static readonly Color CardBlue = new Color(0.06f, 0.23f, 0.43f, 0.95f);
-    private static readonly Color CardGreen = new Color(0.12f, 0.55f, 0.35f, 0.95f);
+    private Button CreateCornerButton(string objectName, Transform parent, Sprite sprite, Vector2 anchoredPosition, Vector2 sizeDelta)
+    {
+        GameObject buttonObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer));
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform rect = (RectTransform)buttonObject.transform;
+        rect.anchorMin = new Vector2(1f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(1f, 1f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = sizeDelta;
+
+        Image image = buttonObject.AddComponent<Image>();
+        ApplySprite(image, sprite, true);
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        return button;
+    }
+
+    private TMP_Text CreateText(string objectName, Transform parent, string text, float fontSize, FontStyles fontStyle, TextAlignmentOptions alignment, Color color)
+    {
+        GameObject textObject = new GameObject(objectName, typeof(RectTransform));
+        textObject.transform.SetParent(parent, false);
+
+        TextMeshProUGUI tmp = textObject.AddComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.fontStyle = fontStyle;
+        tmp.alignment = alignment;
+        tmp.color = color;
+        tmp.raycastTarget = false;
+        return tmp;
+    }
 
     private static void StretchFull(RectTransform rect)
     {

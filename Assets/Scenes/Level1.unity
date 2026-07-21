@@ -2932,28 +2932,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &634845404
 GameObject:
   m_ObjectHideFlags: 0
@@ -3120,28 +3117,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &682336115
 GameObject:
   m_ObjectHideFlags: 0
@@ -4878,28 +4872,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.4, y: 0.4}
-  maviExit:
+    size: {x: 0.4, y: 0.4}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!65 &866646375
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5116,28 +5107,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1001 &940277335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6606,28 +6594,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!65 &1256828484
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8814,28 +8799,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1001 &1585890152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9154,28 +9136,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!54 &1653740380
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9397,7 +9376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3a8c91d2b4e6f708192a3b4c5d6e7f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acilisdaHizala: 1
+  alignOnStart: 1
 --- !u!1 &1699269002
 GameObject:
   m_ObjectHideFlags: 0
@@ -9632,28 +9611,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &1721031985 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7901682568757532379, guid: 035aea67dba2f7944b67382b41a45966,
@@ -9693,28 +9669,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &1741363877
 GameObject:
   m_ObjectHideFlags: 0
@@ -9962,28 +9935,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
+  color: 0
   gameArea: {fileID: 702454732}
-  sinirlariOtomatikHesapla: 1
+  autoCalculateBounds: 1
   minX: -2.66
   maxX: 2.75
   minZ: -1.66
   maxZ: 6.99
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!54 &1789113315
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10353,28 +10323,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1001 &1851600807
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10767,28 +10734,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
+  color: 1
   gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!4 &1954357098 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7413974758062034017, guid: 035aea67dba2f7944b67382b41a45966,
@@ -10828,28 +10792,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!4 &1983454298 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7413974758062034017, guid: 035aea67dba2f7944b67382b41a45966,
@@ -10889,28 +10850,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &2009016387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 680621807215892037, guid: 71347215e11d1d74781257f65d3620a6,
@@ -10929,7 +10887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfe3cc8b5da14f146b51d92847e7c8c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toplamSureSaniye: 179
+  totalDurationSeconds: 179
   timerText: {fileID: 854273572}
 --- !u!4 &2026399327 stripped
 Transform:
@@ -10970,28 +10928,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 1
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 1
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1001 &2028505743
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11089,28 +11044,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renk: 0
-  kilitli: 0
-  anahtarBlogu: 0
-  kilitGorseli: {fileID: 0}
-  gameArea: {fileID: 0}
-  sinirlariOtomatikHesapla: 1
+  color: 0
+  gameArea: {fileID: 702454732}
+  autoCalculateBounds: 1
   minX: -1
   maxX: 1
   minZ: -1
   maxZ: 1
-  kirmiziExit:
+  redExit:
     exitTransform: {fileID: 82765827}
-    boyut: {x: 0.3, y: 0.3}
-  maviExit:
+    size: {x: 0.3, y: 0.3}
+  blueExit:
     exitTransform: {fileID: 544644201}
-    boyut: {x: 0.3, y: 0.3}
-  sariExit:
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
     exitTransform: {fileID: 689041176}
-    boyut: {x: 0.3, y: 0.3}
-  baslangictaGridaHizala: 1
-  birakincaGridaHizala: 1
-  adimAdimHareket: 1
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!65 &2056832585
 BoxCollider:
   m_ObjectHideFlags: 0
