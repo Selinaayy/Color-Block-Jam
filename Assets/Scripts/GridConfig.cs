@@ -34,23 +34,19 @@ public static class GridConfig
 
             if (xs.Count > 0)
             {
-                gridXs = MergeCloseValues(xs);
-                gridZs = MergeCloseValues(zs);
+                gridXs = NormalizeEvenSpacing(MergeCloseValues(xs));
+                gridZs = NormalizeEvenSpacing(MergeCloseValues(zs));
             }
         }
 
         if (gridXs == null || gridXs.Length == 0)
         {
-            gridXs = new[] { -0.991f, -0.49121362f, 0.0085727535f, 0.50835913f, 1.0081456f };
+            gridXs = BuildAxis(-0.991f, 5);
         }
 
         if (gridZs == null || gridZs.Length == 0)
         {
-            gridZs = new[]
-            {
-                0.85000235f, 1.3497882f, 1.8495741f, 2.34936f,
-                2.849146f, 3.3489318f, 3.8487177f, 4.3485036f
-            };
+            gridZs = BuildAxis(0.85f, 8);
         }
 
         initialized = true;
@@ -84,6 +80,28 @@ public static class GridConfig
         }
 
         return merged.ToArray();
+    }
+
+    private static float[] NormalizeEvenSpacing(float[] merged)
+    {
+        if (merged == null || merged.Length == 0)
+        {
+            return merged;
+        }
+
+        return BuildAxis(merged[0], merged.Length);
+    }
+
+    private static float[] BuildAxis(float origin, int count)
+    {
+        float[] axis = new float[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            axis[i] = origin + i * CellSize;
+        }
+
+        return axis;
     }
 
     public static int GetCellCount(float worldSize)
