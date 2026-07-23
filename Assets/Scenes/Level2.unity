@@ -1731,7 +1731,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fuseDurationSeconds: 15
   explosionAtSeconds: 14
-  referenceExplosionTime: 3.6333334
+  fuseAnimEndTime: 2.8666666
+  explosionAnimStartTime: 2.8666666
   countdownText: {fileID: 0}
 --- !u!1001 &216642698
 PrefabInstance:
@@ -2198,11 +2199,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7901682568757532379, guid: 035aea67dba2f7944b67382b41a45966,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 253038410}
+      addedObject: {fileID: 253038409}
     - targetCorrespondingSourceObject: {fileID: 7901682568757532379, guid: 035aea67dba2f7944b67382b41a45966,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 253038409}
+      addedObject: {fileID: 253038414}
   m_SourcePrefab: {fileID: 100100000, guid: 035aea67dba2f7944b67382b41a45966, type: 3}
 --- !u!4 &253038407 stripped
 Transform:
@@ -2243,37 +2244,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &253038410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 253038408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: 1
-  gameArea: {fileID: 4215317}
-  autoCalculateBounds: 1
-  minX: -1
-  maxX: 1
-  minZ: -1
-  maxZ: 1
-  redExit:
-    exitTransform: {fileID: 317159414}
-    size: {x: 0.3, y: 0.3}
-  blueExit:
-    exitTransform: {fileID: 2088947451}
-    size: {x: 0.3, y: 0.3}
-  yellowExit:
-    exitTransform: {fileID: 627634436}
-    size: {x: 0.3, y: 0.3}
-  alignToGridOnStart: 1
-  alignToGridOnRelease: 1
-  stepByStepMovement: 1
 --- !u!65 &253038411
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2295,6 +2265,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.40049288, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &253038414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253038408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  gameArea: {fileID: 4215317}
+  autoCalculateBounds: 1
+  minX: -1
+  maxX: 1
+  minZ: -1
+  maxZ: 1
+  redExit:
+    exitTransform: {fileID: 317159414}
+    size: {x: 0.3, y: 0.3}
+  blueExit:
+    exitTransform: {fileID: 2088947451}
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
+    exitTransform: {fileID: 627634436}
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &263286482
 GameObject:
   m_ObjectHideFlags: 0
@@ -2867,8 +2868,22 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6314966793084356317, guid: eed10b21cb152ec48926f5c205109e6f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2056832576}
+    - targetCorrespondingSourceObject: {fileID: 6314966793084356317, guid: eed10b21cb152ec48926f5c205109e6f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2056832579}
   m_SourcePrefab: {fileID: 100100000, guid: eed10b21cb152ec48926f5c205109e6f, type: 3}
+--- !u!1 &347838956 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6314966793084356317, guid: eed10b21cb152ec48926f5c205109e6f,
+    type: 3}
+  m_PrefabInstance: {fileID: 347838955}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &358452504
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3524,10 +3539,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 514177755}
-    - targetCorrespondingSourceObject: {fileID: 7901682568757532379, guid: 035aea67dba2f7944b67382b41a45966,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 514177754}
   m_SourcePrefab: {fileID: 100100000, guid: 035aea67dba2f7944b67382b41a45966, type: 3}
 --- !u!4 &514177752 stripped
 Transform:
@@ -3541,37 +3552,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 514177751}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &514177754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 514177753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: 0
-  gameArea: {fileID: 4215317}
-  autoCalculateBounds: 1
-  minX: -1
-  maxX: 1
-  minZ: -1
-  maxZ: 1
-  redExit:
-    exitTransform: {fileID: 317159414}
-    size: {x: 0.3, y: 0.3}
-  blueExit:
-    exitTransform: {fileID: 2088947451}
-    size: {x: 0.3, y: 0.3}
-  yellowExit:
-    exitTransform: {fileID: 627634436}
-    size: {x: 0.3, y: 0.3}
-  alignToGridOnStart: 1
-  alignToGridOnRelease: 1
-  stepByStepMovement: 1
 --- !u!65 &514177755
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11963,6 +11943,58 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 347838955}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &2056832576
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347838956}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9995723, y: 0.40448412, z: 0.9995723}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2056832579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347838956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebbb7823e5e0f7d4fa606fefb6373506, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 1
+  gameArea: {fileID: 4215317}
+  autoCalculateBounds: 1
+  minX: -1
+  maxX: 1
+  minZ: -1
+  maxZ: 1
+  redExit:
+    exitTransform: {fileID: 317159414}
+    size: {x: 0.3, y: 0.3}
+  blueExit:
+    exitTransform: {fileID: 2088947451}
+    size: {x: 0.3, y: 0.3}
+  yellowExit:
+    exitTransform: {fileID: 627634436}
+    size: {x: 0.3, y: 0.3}
+  alignToGridOnStart: 1
+  alignToGridOnRelease: 1
+  stepByStepMovement: 1
 --- !u!1 &2088947447
 GameObject:
   m_ObjectHideFlags: 0
