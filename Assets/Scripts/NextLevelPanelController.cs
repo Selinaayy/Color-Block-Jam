@@ -85,28 +85,7 @@ public class NextLevelPanelController : MonoBehaviour
 
     private void EnsureManagers()
     {
-        if (LevelManager.Instance == null)
-        {
-            levelManager = new GameObject("LevelManager").AddComponent<LevelManager>();
-        }
-        else
-        {
-            levelManager = LevelManager.Instance;
-        }
-
-        if (RestartManager.Instance == null)
-        {
-            restartManager = new GameObject("RestartManager").AddComponent<RestartManager>();
-        }
-        else
-        {
-            restartManager = RestartManager.Instance;
-        }
-
-        if (SettingsManager.Instance == null)
-        {
-            new GameObject("SettingsManager").AddComponent<SettingsManager>();
-        }
+        RuntimeServices.EnsureLevelCompleteManagers(out levelManager, out restartManager);
     }
 
     private void BuildLevelCompleteUI()

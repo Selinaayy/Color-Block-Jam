@@ -2,37 +2,32 @@ using UnityEngine;
 
 public class BlockDragInput : MonoBehaviour
 {
-    private static BlockDragInput instance;
+    public static BlockDragInput Instance { get; private set; }
+
     private BlockMover activeBlock;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void CreateInputController()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
     {
-        if (instance != null)
-        {
-            return;
-        }
-
-        GameObject inputObject = new GameObject("BlockDragInput");
-        instance = inputObject.AddComponent<BlockDragInput>();
+        Instance = null;
     }
 
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        instance = this;
+        Instance = this;
     }
 
     private void OnDestroy()
     {
-        if (instance == this)
+        if (Instance == this)
         {
-            instance = null;
+            Instance = null;
         }
     }
 

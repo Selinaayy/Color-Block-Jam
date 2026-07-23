@@ -9,18 +9,7 @@ public static class BlockGridTools
     {
         var blocks = new List<BlockMover>();
         CollectAllBlockMovers(blocks);
-        int count = 0;
-
-        foreach (BlockMover block in blocks)
-        {
-            BoxCollider collider = block.CachedBoxCollider;
-            GridConfig.NormalizeCollider(collider, block.transform);
-
-            Undo.RecordObject(block.transform, "Grid Align Block");
-            block.AlignToGridCell();
-            count++;
-        }
-
+        int count = BlockGridAligner.AlignBlockCollection(blocks);
         Debug.Log($"Aligned {count} blocks to grid.");
     }
 

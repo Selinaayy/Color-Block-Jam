@@ -5,10 +5,12 @@ using UnityEngine;
 public class BombFuseController : MonoBehaviour
 {
     private static readonly string[] LegacyDigitNames = { "1", "2", "3" };
+    private const string BombStateName = "Bomb";
 
     [SerializeField] private float fuseDurationSeconds = 15f;
-    [SerializeField] private float explosionAtSeconds = 1f;
-    [SerializeField] private float referenceExplosionTime = 3.6333334f;
+    [SerializeField] private float explosionAtSeconds = 14f;
+    [SerializeField] private float fuseAnimEndTime = 2.8666666f;
+    [SerializeField] private float explosionAnimStartTime = 2.8666666f;
     [SerializeField] private TextMeshPro countdownText;
 
     private float remainingTime;
@@ -16,6 +18,7 @@ public class BombFuseController : MonoBehaviour
     private bool explosionTriggered;
     private Animator animator;
     private Transform bombRoot;
+    private float clipLength = 10f;
 
     void Awake()
     {
@@ -26,9 +29,10 @@ public class BombFuseController : MonoBehaviour
         }
 
         bombRoot = FindBombRoot();
+        CacheClipLength();
         SetupCountdownText();
         HideLegacyCountdownObjects();
-        ApplyAnimatorSpeed();
+        ResetFuseAnimation();
     }
 
     void Start()
@@ -39,25 +43,23 @@ public class BombFuseController : MonoBehaviour
 
     void Update()
     {
-        if (remainingTime <= 0f)
+        if (remainingTime <= 0f || explosionTriggered)
         {
             return;
         }
 
         remainingTime -= Time.deltaTime;
+        float elapsed = fuseDurationSeconds - remainingTime;
 
-        if (!explosionTriggered && fuseDurationSeconds - remainingTime >= explosionAtSeconds)
+        UpdateFuseAnimation(elapsed);
+
+        if (elapsed >= explosionAtSeconds)
         {
             TriggerExplosion();
-        }
-
-        if (explosionTriggered)
-        {
             return;
         }
 
         int secondsLeft = Mathf.Max(0, Mathf.CeilToInt(remainingTime));
-
         if (secondsLeft != lastDisplayedSecond)
         {
             UpdateCountdownDisplay(secondsLeft);
@@ -66,24 +68,59 @@ public class BombFuseController : MonoBehaviour
 
     void LateUpdate()
     {
-        HideLegacyCountdownObjects();
-        if (countdownText != null && remainingTime > 0f && !explosionTriggered)
-        {
-            countdownText.gameObject.SetActive(true);
-        }
-    }
-
-#if UNITY_EDITOR
-    void OnValidate()
-    {
-        if (!Application.isPlaying)
+        if (explosionTriggered)
         {
             return;
         }
 
-        ApplyAnimatorSpeed();
+        HideLegacyCountdownObjects();
     }
-#endif
+
+    private void CacheClipLength()
+    {
+        if (animator == null || animator.runtimeAnimatorController == null)
+        {
+            return;
+        }
+
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        for (int i = 0; i < clips.Length; i++)
+        {
+            if (clips[i].name == BombStateName)
+            {
+                clipLength = clips[i].length;
+                return;
+            }
+        }
+    }
+
+    private void ResetFuseAnimation()
+    {
+        if (animator == null)
+        {
+            return;
+        }
+
+        animator.Play(BombStateName, 0, 0f);
+        animator.speed = 0f;
+        animator.Update(0f);
+    }
+
+    private void UpdateFuseAnimation(float elapsed)
+    {
+        if (animator == null || clipLength <= 0f)
+        {
+            return;
+        }
+
+        float fuseProgress = Mathf.Clamp01(elapsed / explosionAtSeconds);
+        float animTime = fuseProgress * fuseAnimEndTime;
+        float normalizedTime = animTime / clipLength;
+
+        animator.Play(BombStateName, 0, normalizedTime);
+        animator.speed = 0f;
+        animator.Update(0f);
+    }
 
     private Transform FindBombRoot()
     {
@@ -186,8 +223,7 @@ public class BombFuseController : MonoBehaviour
 
         if (secondsLeft <= 0)
         {
-            countdownText.text = string.Empty;
-            countdownText.gameObject.SetActive(false);
+            HideCountdownDisplay();
             return;
         }
 
@@ -197,6 +233,15 @@ public class BombFuseController : MonoBehaviour
 
     private void HideCountdownDisplay()
     {
+        if (bombRoot != null)
+        {
+            Transform countdownTransform = bombRoot.Find("Countdown");
+            if (countdownTransform != null)
+            {
+                countdownTransform.gameObject.SetActive(false);
+            }
+        }
+
         if (countdownText == null)
         {
             return;
@@ -215,34 +260,57 @@ public class BombFuseController : MonoBehaviour
 
         explosionTriggered = true;
         HideCountdownDisplay();
+        PlayExplosionAnimation();
+        PlayExplosionEffects();
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.CompleteLevel();
-            return;
-        }
-
-        Time.timeScale = 0f;
-
-        if (CountDownTimer.Instance != null)
-        {
-            CountDownTimer.Instance.StopTimer();
-        }
-
-        NextLevelPanelController panel = FindObjectOfType<NextLevelPanelController>(true);
-        if (panel != null)
-        {
-            panel.gameObject.SetActive(true);
-        }
+        LevelCompleteFlow.RequestLevelComplete();
     }
 
-    private void ApplyAnimatorSpeed()
+    private void PlayExplosionAnimation()
     {
-        if (animator == null || explosionAtSeconds <= 0f)
+        if (animator == null || clipLength <= 0f)
         {
             return;
         }
 
-        animator.speed = referenceExplosionTime / explosionAtSeconds;
+        float normalizedStart = explosionAnimStartTime / clipLength;
+        animator.Play(BombStateName, 0, normalizedStart);
+
+        float remainingAnimTime = clipLength - explosionAnimStartTime;
+        float remainingRealTime = Mathf.Max(0.01f, fuseDurationSeconds - explosionAtSeconds);
+        animator.speed = remainingAnimTime / remainingRealTime;
+    }
+
+    private void PlayExplosionEffects()
+    {
+        if (bombRoot == null)
+        {
+            return;
+        }
+
+        Transform fx = bombRoot.Find("FX");
+        if (fx == null)
+        {
+            return;
+        }
+
+        Transform candle = fx.Find("Candle");
+        if (candle != null)
+        {
+            candle.gameObject.SetActive(false);
+        }
+
+        Transform explosion = fx.Find("Explosion");
+        if (explosion == null)
+        {
+            return;
+        }
+
+        explosion.gameObject.SetActive(true);
+        ParticleSystem[] particleSystems = explosion.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            particleSystems[i].Play(true);
+        }
     }
 }

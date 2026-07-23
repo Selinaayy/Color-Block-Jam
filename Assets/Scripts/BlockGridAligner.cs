@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -28,6 +29,12 @@ public class BlockGridAligner : MonoBehaviour
             return;
         }
 
+        StartCoroutine(AlignWhenReady());
+    }
+
+    private IEnumerator AlignWhenReady()
+    {
+        yield return null;
         AlignAllBlocks(false);
     }
 
@@ -37,11 +44,34 @@ public class BlockGridAligner : MonoBehaviour
 
         var blocks = new List<BlockMover>();
         ComponentCacheUtility.CollectBlocksInChildren(transform, transform, blocks, true);
+        int count = AlignBlockCollection(blocks, transform);
+        RefreshAllBlockFootprints();
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying && count > 0)
+        {
+            EditorUtility.SetDirty(this);
+            if (gameObject.scene.IsValid())
+            {
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            }
+        }
+#endif
+
+        if (writeLog)
+        {
+            Debug.Log($"BlockGridAligner: aligned {count} blocks to grid.");
+        }
+    }
+
+    public static int AlignBlockCollection(IReadOnlyList<BlockMover> blocks, Transform skipTransform = null)
+    {
         int count = 0;
 
-        foreach (BlockMover block in blocks)
+        for (int i = 0; i < blocks.Count; i++)
         {
-            if (block == null || block.transform == transform)
+            BlockMover block = blocks[i];
+            if (block == null || block.transform == skipTransform)
             {
                 continue;
             }
@@ -65,20 +95,19 @@ public class BlockGridAligner : MonoBehaviour
             count++;
         }
 
-#if UNITY_EDITOR
-        if (!Application.isPlaying && count > 0)
-        {
-            EditorUtility.SetDirty(this);
-            if (gameObject.scene.IsValid())
-            {
-                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
-            }
-        }
-#endif
+        return count;
+    }
 
-        if (writeLog)
+    public static void RefreshAllBlockFootprints()
+    {
+        IReadOnlyList<BlockMover> blocks = BlockRegistry.All;
+        for (int i = 0; i < blocks.Count; i++)
         {
-            Debug.Log($"BlockGridAligner: aligned {count} blocks to grid.");
+            BlockMover block = blocks[i];
+            if (block != null && block.isActiveAndEnabled && !block.HasExited)
+            {
+                block.RefreshFootprint();
+            }
         }
     }
 }

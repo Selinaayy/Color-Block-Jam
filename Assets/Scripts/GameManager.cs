@@ -20,12 +20,9 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+        Time.timeScale = 1f;
 
-        if (SettingsManager.Instance == null)
-        {
-            GameObject settingsObject = new GameObject("SettingsManager");
-            settingsObject.AddComponent<SettingsManager>();
-        }
+        RuntimeServices.EnsureSettingsManager();
     }
 
     void Start()

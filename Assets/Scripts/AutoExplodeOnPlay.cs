@@ -24,6 +24,7 @@ public class AutoExplodeOnPlay : MonoBehaviour
 
         if (Instance != null && Instance != this)
         {
+            Destroy(gameObject);
             return;
         }
 

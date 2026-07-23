@@ -4,6 +4,7 @@ using UnityEngine;
 public static class BlockRegistry
 {
     private static readonly List<BlockMover> blocks = new List<BlockMover>();
+    private static readonly HashSet<BlockMover> blockSet = new HashSet<BlockMover>();
     private static readonly Dictionary<int, BlockMover> colliderToBlock = new Dictionary<int, BlockMover>();
 
     public static IReadOnlyList<BlockMover> All => blocks;
@@ -12,12 +13,13 @@ public static class BlockRegistry
     private static void ResetStatics()
     {
         blocks.Clear();
+        blockSet.Clear();
         colliderToBlock.Clear();
     }
 
     public static void Register(BlockMover block, Collider collider)
     {
-        if (block != null && !blocks.Contains(block))
+        if (block != null && blockSet.Add(block))
         {
             blocks.Add(block);
         }
@@ -45,7 +47,10 @@ public static class BlockRegistry
             return;
         }
 
-        blocks.Remove(block);
+        if (blockSet.Remove(block))
+        {
+            blocks.Remove(block);
+        }
 
         var colliderIdsToRemove = new List<int>();
         foreach (KeyValuePair<int, BlockMover> entry in colliderToBlock)
