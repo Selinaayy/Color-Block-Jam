@@ -58,10 +58,12 @@ public class BlockGridAligner : MonoBehaviour
         }
 #endif
 
-        if (writeLog)
+#if UNITY_EDITOR
+        if (writeLog && !Application.isPlaying)
         {
             Debug.Log($"BlockGridAligner: aligned {count} blocks to grid.");
         }
+#endif
     }
 
     public static int AlignBlockCollection(IReadOnlyList<BlockMover> blocks, Transform skipTransform = null)

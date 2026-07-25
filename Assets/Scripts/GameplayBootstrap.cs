@@ -16,6 +16,24 @@ public static class GameplayBootstrap
     {
         Time.timeScale = 1f;
         EnsureBlockDragInput();
+
+        if (scene.name == "Level1" || scene.name == "Level2")
+        {
+            ApplySmoothSlideMovement();
+        }
+    }
+
+    private static void ApplySmoothSlideMovement()
+    {
+        BlockMover[] blocks = Object.FindObjectsOfType<BlockMover>();
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            BlockMover block = blocks[i];
+            if (block != null)
+            {
+                block.ConfigureMovement(stepByStep: false, smoothSlide: true);
+            }
+        }
     }
 
     private static void EnsureBlockDragInput()

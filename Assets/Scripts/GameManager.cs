@@ -83,7 +83,6 @@ public class GameManager : MonoBehaviour
         if (levelCompletePanel != null)
         {
             levelCompletePanel.SetActive(true);
-            Debug.Log("Level complete panel opened.");
         }
     }
 }

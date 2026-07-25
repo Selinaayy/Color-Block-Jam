@@ -6,6 +6,7 @@ public static class LevelCompleteUILoader
     private const string ResourcesFolder = "LevelCompleteUI";
     private static Dictionary<string, Sprite> sprites;
     private static bool loaded;
+    private static bool missingSpritesLogged;
 
     public static Sprite Get(string spriteName)
     {
@@ -61,9 +62,10 @@ public static class LevelCompleteUILoader
             }
         }
 
-        if (sprites.Count == 0)
+        if (sprites.Count == 0 && !missingSpritesLogged)
         {
-            Debug.LogError("LevelCompleteUILoader: No sprites found in Resources/" + ResourcesFolder + ". Reimport PNG files as Sprite (2D and UI).");
+            missingSpritesLogged = true;
+            Debug.LogWarning("LevelCompleteUILoader: No sprites found in Resources/" + ResourcesFolder + ". Reimport PNG files as Sprite (2D and UI).");
         }
     }
 }

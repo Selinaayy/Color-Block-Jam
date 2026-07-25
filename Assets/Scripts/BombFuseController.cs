@@ -12,13 +12,17 @@ public class BombFuseController : MonoBehaviour
     [SerializeField] private float fuseAnimEndTime = 2.8666666f;
     [SerializeField] private float explosionAnimStartTime = 2.8666666f;
     [SerializeField] private TextMeshPro countdownText;
+    [SerializeField] private string hostBlockName = "Block_Square2 (3)";
 
     private float remainingTime;
     private int lastDisplayedSecond = -1;
     private bool explosionTriggered;
+    private bool dismissed;
     private Animator animator;
     private Transform bombRoot;
     private float clipLength = 10f;
+    private BlockMover hostBlock;
+    private Vector3 hostOffset;
 
     void Awake()
     {
@@ -39,12 +43,19 @@ public class BombFuseController : MonoBehaviour
     {
         remainingTime = fuseDurationSeconds;
         UpdateCountdownDisplay(Mathf.CeilToInt(remainingTime));
+        CacheHostBlock();
     }
 
     void Update()
     {
-        if (remainingTime <= 0f || explosionTriggered)
+        if (dismissed || remainingTime <= 0f || explosionTriggered)
         {
+            return;
+        }
+
+        if (hostBlock != null && hostBlock.HasExited)
+        {
+            DismissSilently();
             return;
         }
 
@@ -68,9 +79,14 @@ public class BombFuseController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (explosionTriggered)
+        if (dismissed || explosionTriggered)
         {
             return;
+        }
+
+        if (hostBlock != null)
+        {
+            transform.position = hostBlock.transform.position + hostOffset;
         }
 
         HideLegacyCountdownObjects();
@@ -251,9 +267,49 @@ public class BombFuseController : MonoBehaviour
         countdownText.gameObject.SetActive(false);
     }
 
+    private void CacheHostBlock()
+    {
+        if (string.IsNullOrWhiteSpace(hostBlockName))
+        {
+            return;
+        }
+
+        GameObject hostObject = SceneObjectRegistry.FindGameObjectByName(hostBlockName);
+        if (hostObject == null || !hostObject.TryGetComponent(out hostBlock))
+        {
+            return;
+        }
+
+        hostOffset = transform.position - hostBlock.transform.position;
+    }
+
+    private void DismissSilently()
+    {
+        if (dismissed || explosionTriggered)
+        {
+            return;
+        }
+
+        dismissed = true;
+        HideCountdownDisplay();
+        HideLegacyCountdownObjects();
+
+        if (animator != null)
+        {
+            animator.enabled = false;
+        }
+
+        if (bombRoot != null)
+        {
+            bombRoot.gameObject.SetActive(false);
+        }
+
+        gameObject.SetActive(false);
+    }
+
     private void TriggerExplosion()
     {
-        if (explosionTriggered)
+        if (explosionTriggered || dismissed)
         {
             return;
         }

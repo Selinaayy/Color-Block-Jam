@@ -61,7 +61,6 @@ public class CountDownTimer : MonoBehaviour
             }
             else
             {
-                Debug.Log("Time is up.");
                 remainingTime = 0;
                 isRunning = false;
                 UpdateTimerDisplay(remainingTime);

@@ -33,8 +33,11 @@ public class BlockMover : MonoBehaviour
     public bool alignToGridOnRelease = true;
     [FormerlySerializedAs("adimAdimHareket")]
     public bool stepByStepMovement = true;
+    public bool smoothSlideMovement = false;
 
     private bool isDragging = false;
+    private bool smoothAxisLocked;
+    private bool smoothAxisIsX;
     private Vector3 dragOffset;
     private Vector3 dragStartMouseWorldPosition;
     private int dragStartIndexX;
@@ -65,6 +68,37 @@ public class BlockMover : MonoBehaviour
 
             return boxCollider;
         }
+    }
+
+    public Bounds GetWorldOccupancyBounds()
+    {
+        if (visualRenderer == null)
+        {
+            visualRenderer = ComponentCacheUtility.FindFirstRenderer(transform);
+        }
+
+        if (visualRenderer != null)
+        {
+            return visualRenderer.bounds;
+        }
+
+        if (boxCollider == null)
+        {
+            TryGetComponent(out boxCollider);
+        }
+
+        return boxCollider != null
+            ? boxCollider.bounds
+            : new Bounds(transform.position, Vector3.zero);
+    }
+
+    private Bounds GetOccupancyBoundsAtPosition(Vector3 position)
+    {
+        Vector3 previousPosition = transform.position;
+        transform.position = position;
+        Bounds bounds = GetWorldOccupancyBounds();
+        transform.position = previousPosition;
+        return bounds;
     }
 
     [System.Serializable]
@@ -457,6 +491,7 @@ public class BlockMover : MonoBehaviour
         }
 
         isDragging = true;
+        smoothAxisLocked = false;
         dragStartMouseWorldPosition = GetMouseWorldPosition();
 
         if (autoCalculateBounds)
@@ -464,38 +499,54 @@ public class BlockMover : MonoBehaviour
             CalculateBounds();
         }
 
-        if (stepByStepMovement)
+        if (UsesGridFootprintTracking())
         {
-            GridConfig.EnsureInitialized();
-            GridConfig.GetFootprintSize(boxCollider, transform, out cellCountX, out cellCountZ);
-
-            foreach (BlockMover block in BlockRegistry.All)
-            {
-                if (block != null && !block.HasExited)
-                {
-                    block.RefreshFootprint();
-                }
-            }
-
-            if (!footprintReady)
-            {
-                RefreshFootprint();
-            }
-
-            if (footprintReady)
-            {
-                dragStartIndexX = gridStartX;
-                dragStartIndexZ = gridStartZ;
-            }
-            else
-            {
-                GridConfig.TryGetFootprintIndices(transform.position, cellCountX, cellCountZ,
-                    out dragStartIndexX, out dragStartIndexZ);
-            }
+            PrepareGridFootprintForDrag();
         }
 
         dragOffset = transform.position - dragStartMouseWorldPosition;
         return true;
+    }
+
+    public void ConfigureMovement(bool stepByStep, bool smoothSlide)
+    {
+        stepByStepMovement = stepByStep;
+        smoothSlideMovement = smoothSlide;
+    }
+
+    private bool UsesGridFootprintTracking()
+    {
+        return stepByStepMovement || smoothSlideMovement;
+    }
+
+    private void PrepareGridFootprintForDrag()
+    {
+        GridConfig.EnsureInitialized();
+        GridConfig.GetFootprintSize(boxCollider, transform, out cellCountX, out cellCountZ);
+
+        foreach (BlockMover block in BlockRegistry.All)
+        {
+            if (block != null && !block.HasExited)
+            {
+                block.RefreshFootprint();
+            }
+        }
+
+        if (!footprintReady)
+        {
+            RefreshFootprint();
+        }
+
+        if (footprintReady)
+        {
+            dragStartIndexX = gridStartX;
+            dragStartIndexZ = gridStartZ;
+        }
+        else
+        {
+            GridConfig.TryGetFootprintIndices(transform.position, cellCountX, cellCountZ,
+                out dragStartIndexX, out dragStartIndexZ);
+        }
     }
 
     public void UpdateDrag()
@@ -508,6 +559,12 @@ public class BlockMover : MonoBehaviour
         if (stepByStepMovement)
         {
             DragStepByStep();
+            return;
+        }
+
+        if (smoothSlideMovement)
+        {
+            DragSmoothSlide();
             return;
         }
 
@@ -664,11 +721,126 @@ public class BlockMover : MonoBehaviour
         return current;
     }
 
+    private void DragSmoothSlide()
+    {
+        Vector3 mouseTarget = GetMouseWorldPosition() + dragOffset;
+        mouseTarget.y = transform.position.y;
+        Vector3 delta = mouseTarget - transform.position;
+
+        if (!smoothAxisLocked)
+        {
+            float axisPickThreshold = GridConfig.CellSize * 0.15f;
+            if (delta.sqrMagnitude < axisPickThreshold * axisPickThreshold)
+            {
+                return;
+            }
+
+            smoothAxisIsX = Mathf.Abs(delta.x) >= Mathf.Abs(delta.z);
+            smoothAxisLocked = true;
+        }
+
+        Vector3 targetPosition = transform.position;
+        if (smoothAxisIsX)
+        {
+            targetPosition.x = mouseTarget.x;
+        }
+        else
+        {
+            targetPosition.z = mouseTarget.z;
+        }
+
+        if (IsInsideOwnExit(targetPosition))
+        {
+            transform.position = targetPosition;
+            OnExitDoor();
+            return;
+        }
+
+        ApplyDragPosition(ResolveAxisLockedPosition(targetPosition));
+    }
+
+    private Vector3 ResolveAxisLockedPosition(Vector3 targetPosition)
+    {
+        Vector3 currentPosition = transform.position;
+        targetPosition = ClampPosition(targetPosition);
+        targetPosition.y = currentPosition.y;
+
+        if (smoothAxisIsX)
+        {
+            targetPosition.z = currentPosition.z;
+        }
+        else
+        {
+            targetPosition.x = currentPosition.x;
+        }
+
+        if (!HasObstructionAtPosition(targetPosition))
+        {
+            return targetPosition;
+        }
+
+        float validAxis = smoothAxisIsX ? currentPosition.x : currentPosition.z;
+        float targetAxis = smoothAxisIsX ? targetPosition.x : targetPosition.z;
+
+        if (Mathf.Approximately(validAxis, targetAxis))
+        {
+            return currentPosition;
+        }
+
+        float invalidAxis = targetAxis;
+
+        for (int i = 0; i < 20; i++)
+        {
+            float midAxis = (validAxis + invalidAxis) * 0.5f;
+            Vector3 testPosition = currentPosition;
+            if (smoothAxisIsX)
+            {
+                testPosition.x = midAxis;
+            }
+            else
+            {
+                testPosition.z = midAxis;
+            }
+
+            if (HasObstructionAtPosition(testPosition))
+            {
+                invalidAxis = midAxis;
+            }
+            else
+            {
+                validAxis = midAxis;
+            }
+        }
+
+        Vector3 resolvedPosition = currentPosition;
+        if (smoothAxisIsX)
+        {
+            resolvedPosition.x = validAxis;
+        }
+        else
+        {
+            resolvedPosition.z = validAxis;
+        }
+
+        return ClampPosition(resolvedPosition);
+    }
+
+    private bool HasObstructionAtPosition(Vector3 position)
+    {
+        return IsInsideOtherColorExit(position)
+            || HasBlockColliderOverlapAtPosition(position)
+            || HasWallAtPosition(position);
+    }
+
     private void DragFree()
     {
         Vector3 targetPosition = GetMouseWorldPosition() + dragOffset;
         targetPosition.y = transform.position.y;
+        TryMoveToPosition(targetPosition);
+    }
 
+    private void TryMoveToPosition(Vector3 targetPosition)
+    {
         if (IsInsideOwnExit(targetPosition))
         {
             transform.position = targetPosition;
@@ -686,7 +858,7 @@ public class BlockMover : MonoBehaviour
 
         if (!HasOtherBlockAtPosition(targetPosition))
         {
-            transform.position = targetPosition;
+            ApplyDragPosition(targetPosition);
             return;
         }
 
@@ -700,14 +872,24 @@ public class BlockMover : MonoBehaviour
         Vector3 testX = ClampPosition(new Vector3(targetPosition.x, currentPosition.y, currentPosition.z));
         if (!HasOtherBlockAtPosition(testX) && !IsInsideOtherColorExit(testX))
         {
-            transform.position = testX;
+            ApplyDragPosition(testX);
             return;
         }
 
         Vector3 testZ = ClampPosition(new Vector3(currentPosition.x, currentPosition.y, targetPosition.z));
         if (!HasOtherBlockAtPosition(testZ) && !IsInsideOtherColorExit(testZ))
         {
-            transform.position = testZ;
+            ApplyDragPosition(testZ);
+        }
+    }
+
+    private void ApplyDragPosition(Vector3 position)
+    {
+        transform.position = position;
+
+        if (smoothSlideMovement && isDragging)
+        {
+            RefreshFootprint();
         }
     }
 
@@ -788,6 +970,11 @@ public class BlockMover : MonoBehaviour
             return false;
         }
 
+        if (smoothSlideMovement)
+        {
+            return HasObstructionAtPosition(position);
+        }
+
         GridConfig.GetFootprintSize(boxCollider, transform, out int cellsX, out int cellsZ);
 
         Vector3 previousPosition = transform.position;
@@ -802,6 +989,34 @@ public class BlockMover : MonoBehaviour
         }
 
         return HasWallAtPosition(position);
+    }
+
+    private bool HasBlockColliderOverlapAtPosition(Vector3 position)
+    {
+        Bounds testBounds = GetOccupancyBoundsAtPosition(position);
+
+        foreach (BlockMover other in BlockRegistry.All)
+        {
+            if (other == null || other == this || other.HasExited)
+            {
+                continue;
+            }
+
+            if (BoundsOverlapXZ(testBounds, other.GetWorldOccupancyBounds(), BlockSeparationGap))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private const float BlockSeparationGap = 0.005f;
+
+    private static bool BoundsOverlapXZ(Bounds a, Bounds b, float separationGap)
+    {
+        return a.min.x < b.max.x - separationGap && a.max.x > b.min.x + separationGap &&
+               a.min.z < b.max.z - separationGap && a.max.z > b.min.z + separationGap;
     }
 
     private static bool IsWallCollider(Collider collider)

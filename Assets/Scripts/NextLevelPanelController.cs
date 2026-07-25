@@ -24,6 +24,7 @@ public class NextLevelPanelController : MonoBehaviour
     private bool uiBuilt;
     private Coroutine showRoutine;
     private Coroutine pulseRoutine;
+    private static bool missingUiSpritesLogged;
 
     void Awake()
     {
@@ -184,9 +185,10 @@ public class NextLevelPanelController : MonoBehaviour
         TMP_Text replayLabel = CreateText("ReplayLabel", restartButton.transform, "REPLAY", 28f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
         SetAnchoredRect(replayLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(180f, 40f));
 
-        if (LevelCompleteUILoader.Get("Bg_popup_") == null)
+        if (LevelCompleteUILoader.Get("Bg_popup_") == null && !missingUiSpritesLogged)
         {
-            Debug.LogError("Level complete UI sprites missing. Select Assets/Resources/LevelCompleteUI folder in Unity, then reimport all PNG files as Sprite (2D and UI).");
+            missingUiSpritesLogged = true;
+            Debug.LogWarning("Level complete UI sprites missing. Reimport Assets/Resources/LevelCompleteUI PNG files as Sprite (2D and UI).");
         }
     }
 

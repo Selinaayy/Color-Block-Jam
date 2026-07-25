@@ -31,7 +31,5 @@ public class RestartManager : MonoBehaviour
         string currentSceneName = SceneManager.GetActiveScene().name;
 
         SceneManager.LoadScene(currentSceneName);
-
-        Debug.Log("Scene restarted: " + currentSceneName);
     }
 }

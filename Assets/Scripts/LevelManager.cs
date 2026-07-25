@@ -34,9 +34,5 @@ public class LevelManager : MonoBehaviour
         {
             SceneManager.LoadScene(nextSceneIndex);
         }
-        else
-        {
-            Debug.Log("All levels completed.");
-        }
     }
 }
